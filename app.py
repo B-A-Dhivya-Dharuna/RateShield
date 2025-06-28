@@ -24,6 +24,14 @@ def get_abuse_logs():
         formatted.append({"ip": ip, "timestamp": ts})
     return jsonify(formatted)
 
+# ✅ New: Top Abuser Leaderboard Route
+@app.route('/api/logs/top-abusers')
+def get_top_abusers():
+    top = r.zrevrange("abuse_scores", 0, 9, withscores=True)
+    return jsonify([
+        {"ip": ip, "attempts": int(score)} for ip, score in top
+    ])
+
 if __name__ == '__main__':
     print("🟢 Running app on http://127.0.0.1:5050")
     app.run(debug=True, host='0.0.0.0', port=5050)

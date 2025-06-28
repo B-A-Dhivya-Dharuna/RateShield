@@ -25,6 +25,9 @@ def rate_limiter(func):
             r.lpush("abuse_log", f"{ip}|{timestamp}")
             r.ltrim("abuse_log", 0, 99)  # keep only latest 100
 
+            # Increment abuse score for IP
+            r.zincrby("abuse_scores", 1, ip)
+
             return jsonify({
                 "error": "Too many requests, please try again later.",
                 "ip": ip,
